@@ -364,6 +364,9 @@ class DNSRecord implements ArrayAccess
      */
     public function setTtl($ttl)
     {
+        if ($ttl < 600) {
+            throw new \InvalidArgumentException('invalid value for $tty when calling DNSRecord, must be greater then or equal to 600.');
+        }
         $this->container['ttl'] = $ttl;
 
         return $this;
