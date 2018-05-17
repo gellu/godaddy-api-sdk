@@ -1218,9 +1218,9 @@ class VdomainsApi
      * Add the specified DNS Records to the specified Domain
      *
      * @param string $domain Domain whose DNS Records are to be augmented (required)
-     * @param \GoDaddyDomainsClient\Model\DNSRecord $records DNS Records to add to whatever currently exists (required)
+     * @param \GoDaddyDomainsClient\Model\DNSRecord[] $records DNS Records to add to whatever currently exists (required)
      * @param string $x_shopper_id Shopper ID which owns the domain. NOTE: This is only required if you are a Reseller managing a domain purchased outside the scope of your reseller account. For instance, if you&#39;re a Reseller, but purchased a Domain via http://www.godaddy.com (optional)
-     * @return void
+     * @return Array of null, HTTP status code, HTTP response headers (array of strings)
      * @throws \GoDaddyDomainsClient\ApiException on non-2xx response
      */
     public function recordAdd($domain, $records, $x_shopper_id = null)
@@ -1235,7 +1235,7 @@ class VdomainsApi
      * Add the specified DNS Records to the specified Domain
      *
      * @param string $domain Domain whose DNS Records are to be augmented (required)
-     * @param \GoDaddyDomainsClient\Model\DNSRecord $records DNS Records to add to whatever currently exists (required)
+     * @param \GoDaddyDomainsClient\Model\DNSRecord[] $records DNS Records to add to whatever currently exists (required)
      * @param string $x_shopper_id Shopper ID which owns the domain. NOTE: This is only required if you are a Reseller managing a domain purchased outside the scope of your reseller account. For instance, if you&#39;re a Reseller, but purchased a Domain via http://www.godaddy.com (optional)
      * @return Array of null, HTTP status code, HTTP response headers (array of strings)
      * @throws \GoDaddyDomainsClient\ApiException on non-2xx response
@@ -1348,7 +1348,7 @@ class VdomainsApi
      * Retrieve DNS Records for the specified Domain, optionally with the specified Type and/or Name
      *
      * @param string $domain Domain whose DNS Records are to be retrieved (required)
-     * @param string $type DNS Record Type for which DNS Records are to be retrieved (required)
+     * @param string $type DNS Record Type for which DNS Records are to be retrieved (required only if name is used)
      * @param string $name DNS Record Name for which DNS Records are to be retrieved (required)
      * @param string $x_shopper_id Shopper ID which owns the domain. NOTE: This is only required if you are a Reseller managing a domain purchased outside the scope of your reseller account. For instance, if you&#39;re a Reseller, but purchased a Domain via http://www.godaddy.com (optional)
      * @param int $offset Number of results to skip for pagination (optional)
@@ -1356,7 +1356,7 @@ class VdomainsApi
      * @return \GoDaddyDomainsClient\Model\DNSRecord[]
      * @throws \GoDaddyDomainsClient\ApiException on non-2xx response
      */
-    public function recordGet($domain, $type, $name, $x_shopper_id = null, $offset = null, $limit = null)
+    public function recordGet($domain, $type = null, $name = null, $x_shopper_id = null, $offset = null, $limit = null)
     {
         list($response) = $this->recordGetWithHttpInfo($domain, $type, $name, $x_shopper_id, $offset, $limit);
         return $response;
@@ -1368,7 +1368,7 @@ class VdomainsApi
      * Retrieve DNS Records for the specified Domain, optionally with the specified Type and/or Name
      *
      * @param string $domain Domain whose DNS Records are to be retrieved (required)
-     * @param string $type DNS Record Type for which DNS Records are to be retrieved (required)
+     * @param string $type DNS Record Type for which DNS Records are to be retrieved (required only if name is used)
      * @param string $name DNS Record Name for which DNS Records are to be retrieved (required)
      * @param string $x_shopper_id Shopper ID which owns the domain. NOTE: This is only required if you are a Reseller managing a domain purchased outside the scope of your reseller account. For instance, if you&#39;re a Reseller, but purchased a Domain via http://www.godaddy.com (optional)
      * @param int $offset Number of results to skip for pagination (optional)
@@ -1376,19 +1376,15 @@ class VdomainsApi
      * @return Array of \GoDaddyDomainsClient\Model\DNSRecord[], HTTP status code, HTTP response headers (array of strings)
      * @throws \GoDaddyDomainsClient\ApiException on non-2xx response
      */
-    public function recordGetWithHttpInfo($domain, $type, $name, $x_shopper_id = null, $offset = null, $limit = null)
+    public function recordGetWithHttpInfo($domain, $type = null, $name = null, $x_shopper_id = null, $offset = null, $limit = null)
     {
         // verify the required parameter 'domain' is set
         if ($domain === null) {
             throw new \InvalidArgumentException('Missing the required parameter $domain when calling recordGet');
         }
         // verify the required parameter 'type' is set
-        if ($type === null) {
+        if ($type === null && $name !== null) {
             throw new \InvalidArgumentException('Missing the required parameter $type when calling recordGet');
-        }
-        // verify the required parameter 'name' is set
-        if ($name === null) {
-            throw new \InvalidArgumentException('Missing the required parameter $name when calling recordGet');
         }
         // parse inputs
         $resourcePath = "/v1/domains/{domain}/records/{type?}/{name?}";
@@ -1431,13 +1427,14 @@ class VdomainsApi
             );
         }
         // path params
-        if ($name !== null) {
+        if ($type !== null && $name !== null) {
             $resourcePath = str_replace(
                 "{" . "name?" . "}",
                 $this->apiClient->getSerializer()->toPathValue($name),
                 $resourcePath
             );
         }
+        $resourcePath = str_replace(["{type?}", "{name?}"], "", $resourcePath);
         // default format to json
         $resourcePath = str_replace("{format}", "json", $resourcePath);
 
@@ -1513,7 +1510,7 @@ class VdomainsApi
      * @param string $domain Domain whose DNS Records are to be replaced (required)
      * @param \GoDaddyDomainsClient\Model\DNSRecord[] $records DNS Records to replace whatever currently exists (required)
      * @param string $x_shopper_id Shopper ID which owns the domain. NOTE: This is only required if you are a Reseller managing a domain purchased outside the scope of your reseller account. For instance, if you&#39;re a Reseller, but purchased a Domain via http://www.godaddy.com (optional)
-     * @return void
+     * @return Array of null, HTTP status code, HTTP response headers (array of strings)
      * @throws \GoDaddyDomainsClient\ApiException on non-2xx response
      */
     public function recordReplace($domain, $records, $x_shopper_id = null)
@@ -1644,7 +1641,7 @@ class VdomainsApi
      * @param string $type DNS Record Type for which DNS Records are to be replaced (required)
      * @param \GoDaddyDomainsClient\Model\DNSRecordCreateType[] $records DNS Records to replace whatever currently exists (required)
      * @param string $x_shopper_id Shopper ID which owns the domain. NOTE: This is only required if you are a Reseller managing a domain purchased outside the scope of your reseller account. For instance, if you&#39;re a Reseller, but purchased a Domain via http://www.godaddy.com (optional)
-     * @return void
+     * @return Array of null, HTTP status code, HTTP response headers (array of strings)
      * @throws \GoDaddyDomainsClient\ApiException on non-2xx response
      */
     public function recordReplaceType($domain, $type, $records, $x_shopper_id = null)

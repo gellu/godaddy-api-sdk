@@ -522,13 +522,36 @@ try {
 ?>
 ```
 
+### Example #2
+This example shows how to get a list of all records
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+$api_instance = new GoDaddyDomainsClient\Api\VdomainsApi();
+$domain = "domain_example"; // string | Domain whose DNS Records are to be retrieved
+$type = NULL; // string | DNS Record Type for which DNS Records are to be retrieved
+$name = NULL; // string | DNS Record Name for which DNS Records are to be retrieved
+$x_shopper_id = "x_shopper_id_example"; // string | Shopper ID which owns the domain. NOTE: This is only required if you are a Reseller managing a domain purchased outside the scope of your reseller account. For instance, if you're a Reseller, but purchased a Domain via http://www.godaddy.com
+$offset = 56; // int | Number of results to skip for pagination
+$limit = 56; // int | Maximum number of items to return
+
+try {
+    $result = $api_instance->recordGet($domain, $type, $name, $x_shopper_id, $offset, $limit);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling VdomainsApi->recordGet: ', $e->getMessage(), PHP_EOL;
+}
+?>
+```
+
 ### Parameters
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **domain** | **string**| Domain whose DNS Records are to be retrieved |
- **type** | **string**| DNS Record Type for which DNS Records are to be retrieved |
- **name** | **string**| DNS Record Name for which DNS Records are to be retrieved |
+ **type** | **string**| DNS Record Type for which DNS Records are to be retrieved (Required only if Name is set)|
+ **name** | **string**| DNS Record Name for which DNS Records are to be retrieved (Optional, If used Type is required) |
  **x_shopper_id** | **string**| Shopper ID which owns the domain. NOTE: This is only required if you are a Reseller managing a domain purchased outside the scope of your reseller account. For instance, if you&#39;re a Reseller, but purchased a Domain via http://www.godaddy.com | [optional]
  **offset** | **int**| Number of results to skip for pagination | [optional]
  **limit** | **int**| Maximum number of items to return | [optional]
